@@ -22,7 +22,7 @@ st.set_page_config(
 
 # Custom CSS for mobile responsiveness
 st.markdown("""
-<style>
+    <style>
     .main-header {
         font-size: 2.5rem;
         font-weight: bold;
@@ -54,8 +54,8 @@ st.markdown("""
         .main-header { font-size: 2rem; }
         .subtitle { font-size: 1rem; }
     }
-</style>
-""", unsafe_allow_html=True)
+    </style>
+    """, unsafe_allow_html=True)
 
 # Header
 st.markdown('<h1 class="main-header">🌍 Senegal Development Intelligence Platform</h1>', unsafe_allow_html=True)
@@ -113,7 +113,7 @@ def create_demo_data():
             gdp_growth = 5.5 + np.random.normal(0, 1.2)
             inflation = 4.0 + np.random.normal(0, 1.5)
         
-        economic_data.append({
+            economic_data.append({
             'YEAR': year,
             'GDP_Growth_Rate': round(gdp_growth, 1),
             'Inflation_Rate': round(inflation, 1),
@@ -127,107 +127,96 @@ def create_demo_data():
 
 @st.cache_data
 def load_comprehensive_data():
-    """Load comprehensive Senegal data from Snowflake"""
+    """Load comprehensive Senegal data from Snowflake or demo data"""
     try:
-        # Try to load from Streamlit secrets first, then config file
-        config = None
+        # Try to load from Streamlit secrets first
         try:
             # Streamlit Cloud secrets
             config = st.secrets["snowflake"]
-            st.info("🔐 Using Streamlit Cloud secrets")
-        except:
-            try:
-                # Local config file
-                config_path = Path(__file__).parent.parent / "config" / "config.yaml"
-                with open(config_path) as f:
-                    config = yaml.safe_load(f)['snowflake']
-                st.info("📁 Using local config file")
-            except Exception as e:
-                st.warning(f"⚠️ Could not load config: {e}")
-                # Fallback to demo data
-                return create_demo_data()
-        
-        if config is None:
-            st.warning("⚠️ No Snowflake configuration found. Using demo data.")
+            st.info("🔐 Using Streamlit Cloud secrets - connecting to Snowflake...")
+            
+            # Connect to Snowflake
+            conn = snowflake.connector.connect(
+                account=config['account'],
+                user=config['user'],
+                password=config['password'],
+                warehouse=config['warehouse'],
+                database=config['database'],
+                schema=config['schema']
+            )
+            
+            cursor = conn.cursor()
+            
+            # Get presidents data
+            cursor.execute("""
+                SELECT PRESIDENT_NAME, PARTY, START_DATE, END_DATE 
+                FROM presidents_dim 
+                WHERE IS_ACTIVE = TRUE 
+                ORDER BY START_DATE
+            """)
+            presidents_data = cursor.fetchall()
+            presidents_df = pd.DataFrame(presidents_data, columns=['PRESIDENT_NAME', 'PARTY', 'START_DATE', 'END_DATE'])
+            
+            # Get development facts data (using empty country code as it's Senegal)
+            cursor.execute("""
+                SELECT YEAR, INDICATOR_CODE, INDICATOR_NAME, VALUE
+                FROM development_facts 
+                WHERE COUNTRY_CODE = '' OR COUNTRY_CODE = 'SEN'
+                ORDER BY YEAR, INDICATOR_CODE
+            """)
+            dev_data = cursor.fetchall()
+            dev_df = pd.DataFrame(dev_data, columns=['YEAR', 'INDICATOR_CODE', 'INDICATOR_NAME', 'VALUE'])
+            
+            # Get ANSD population data (real population data)
+            cursor.execute("""
+                SELECT YEAR, TOTAL_POPULATION, URBAN_PERCENTAGE, POPULATION_GROWTH_RATE
+                FROM ansd_population 
+                ORDER BY YEAR
+            """)
+            pop_data = cursor.fetchall()
+            pop_df = pd.DataFrame(pop_data, columns=['YEAR', 'TOTAL_POPULATION', 'URBAN_PERCENTAGE', 'POPULATION_GROWTH_RATE'])
+            
+            # Also get development indicators for economic data
+            economic_indicators = ['NY.GDP.MKTP.KD.ZG', 'FP.CPI.TOTL.ZG', 'SL.UEM.TOTL.ZS', 'NE.TRD.GNFS.ZS']
+            econ_data = dev_df[dev_df['INDICATOR_CODE'].isin(economic_indicators)]
+            
+            if not econ_data.empty:
+                economic_df = econ_data.pivot_table(
+                    index='YEAR', 
+                    columns='INDICATOR_CODE', 
+                    values='VALUE', 
+                    aggfunc='mean'
+                ).reset_index()
+                
+                # Rename columns for better display
+                column_mapping = {
+                    'NY.GDP.MKTP.KD.ZG': 'GDP_Growth_Rate',
+                    'FP.CPI.TOTL.ZG': 'Inflation_Rate', 
+                    'SL.UEM.TOTL.ZS': 'Unemployment_Rate',
+                    'NE.TRD.GNFS.ZS': 'Trade_Balance_GDP'
+                }
+                
+                for old_col, new_col in column_mapping.items():
+                    if old_col in economic_df.columns:
+                        economic_df[new_col] = economic_df[old_col]
+            else:
+                # Create empty economic dataframe if no data
+                economic_df = pd.DataFrame(columns=['YEAR', 'GDP_Growth_Rate', 'Inflation_Rate', 'Unemployment_Rate', 'Trade_Balance_GDP'])
+            
+            cursor.close()
+            conn.close()
+            
+            return presidents_df, pop_df, economic_df
+            
+        except Exception as e:
+            st.warning(f"⚠️ Could not connect to Snowflake: {e}")
+            st.info("🔄 Using demo data instead...")
             return create_demo_data()
-    
-        # Connect to Snowflake
-        conn = snowflake.connector.connect(
-            account=config['account'],
-            user=config['user'],
-            password=config['password'],
-            warehouse=config['warehouse'],
-            database=config['database'],
-            schema=config['schema']
-        )
-        
-        cursor = conn.cursor()
-        
-        # Get presidents data
-        cursor.execute("""
-            SELECT PRESIDENT_NAME, PARTY, START_DATE, END_DATE 
-            FROM presidents_dim 
-            WHERE IS_ACTIVE = TRUE 
-            ORDER BY START_DATE
-        """)
-        presidents_data = cursor.fetchall()
-        presidents_df = pd.DataFrame(presidents_data, columns=['PRESIDENT_NAME', 'PARTY', 'START_DATE', 'END_DATE'])
-        
-        # Get development facts data (using empty country code as it's Senegal)
-        cursor.execute("""
-            SELECT YEAR, INDICATOR_CODE, INDICATOR_NAME, VALUE
-            FROM development_facts 
-            WHERE COUNTRY_CODE = '' OR COUNTRY_CODE = 'SEN'
-            ORDER BY YEAR, INDICATOR_CODE
-        """)
-        dev_data = cursor.fetchall()
-        dev_df = pd.DataFrame(dev_data, columns=['YEAR', 'INDICATOR_CODE', 'INDICATOR_NAME', 'VALUE'])
-        
-        
-        # Get ANSD population data (real population data)
-        cursor.execute("""
-            SELECT YEAR, TOTAL_POPULATION, URBAN_PERCENTAGE, POPULATION_GROWTH_RATE
-            FROM ansd_population 
-            ORDER BY YEAR
-        """)
-        pop_data = cursor.fetchall()
-        pop_df = pd.DataFrame(pop_data, columns=['YEAR', 'TOTAL_POPULATION', 'URBAN_PERCENTAGE', 'POPULATION_GROWTH_RATE'])
-        
-        # Also get development indicators for economic data
-        economic_indicators = ['NY.GDP.MKTP.KD.ZG', 'FP.CPI.TOTL.ZG', 'SL.UEM.TOTL.ZS', 'NE.TRD.GNFS.ZS']
-        econ_data = dev_df[dev_df['INDICATOR_CODE'].isin(economic_indicators)]
-        
-        if not econ_data.empty:
-            economic_df = econ_data.pivot_table(
-                index='YEAR', 
-                columns='INDICATOR_CODE', 
-                values='VALUE', 
-                aggfunc='mean'
-            ).reset_index()
             
-            # Rename columns for better display
-            column_mapping = {
-                'NY.GDP.MKTP.KD.ZG': 'GDP_Growth_Rate',
-                'FP.CPI.TOTL.ZG': 'Inflation_Rate', 
-                'SL.UEM.TOTL.ZS': 'Unemployment_Rate',
-                'NE.TRD.GNFS.ZS': 'Trade_Balance_GDP'
-            }
-            
-            for old_col, new_col in column_mapping.items():
-                if old_col in economic_df.columns:
-                    economic_df[new_col] = economic_df[old_col]
-        else:
-            # Create empty economic dataframe if no data
-            economic_df = pd.DataFrame(columns=['YEAR', 'GDP_Growth_Rate', 'Inflation_Rate', 'Unemployment_Rate', 'Trade_Balance_GDP'])
-        
-        cursor.close()
-        conn.close()
-        
-        return presidents_df, pop_df, economic_df
-        
     except Exception as e:
-        st.error(f"Error loading data from Snowflake: {e}")
-        return None, None, None
+        st.warning(f"⚠️ Error loading data: {e}")
+        st.info("🔄 Using demo data instead...")
+        return create_demo_data()
 
 # Load real data
 data = load_comprehensive_data()
@@ -360,9 +349,9 @@ with tab1:
     st.header("🇸🇳 Senegal Development Overview")
     
     # Key metrics in responsive cards
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
         if not pop_df.empty and 'TOTAL_POPULATION' in pop_df.columns:
             latest_pop = pop_df[pop_df['YEAR'] == pop_df['YEAR'].max()]['TOTAL_POPULATION'].iloc[0]
             st.markdown(f'''
@@ -380,8 +369,8 @@ with tab1:
                 <p>2024 Estimate</p>
             </div>
             ''', unsafe_allow_html=True)
-    
-    with col2:
+
+with col2:
         if not pop_df.empty and 'URBAN_PERCENTAGE' in pop_df.columns:
             latest_urban = pop_df[pop_df['YEAR'] == pop_df['YEAR'].max()]['URBAN_PERCENTAGE'].iloc[0]
             st.markdown(f'''
@@ -399,8 +388,8 @@ with tab1:
                 <p>Urban Population</p>
             </div>
             ''', unsafe_allow_html=True)
-    
-    with col3:
+
+with col3:
         if not economic_df.empty and 'GDP_Growth_Rate' in economic_df.columns:
             avg_gdp_growth = economic_df['GDP_Growth_Rate'].mean()
             st.markdown(f'''
@@ -617,10 +606,10 @@ with tab4:
     
     # Key insights
     st.subheader("🎯 Key Insights")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
+
+col1, col2 = st.columns(2)
+
+with col1:
         st.markdown("""
         **📈 Population Trends:**
         - Real data from World Bank API
@@ -632,8 +621,8 @@ with tab4:
         - Inflation tracking
         - Trade balance analysis
         """)
-    
-    with col2:
+
+with col2:
         st.markdown("""
         **🌍 Regional Position:**
         - Leading urbanization in West Africa
