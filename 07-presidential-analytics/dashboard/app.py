@@ -413,7 +413,7 @@ with col2:
             </div>
             ''', unsafe_allow_html=True)
 
-with col3:
+    with col3:
         if not economic_df.empty and 'GDP_Growth_Rate' in economic_df.columns:
             avg_gdp_growth = economic_df['GDP_Growth_Rate'].mean()
             st.markdown(f'''
