@@ -34,7 +34,9 @@ class Config:
         """Override config with environment variables if they exist"""
         # FRED API
         if os.getenv('FRED_API_KEY'):
-            self.config['fred_api_key'] = os.getenv('FRED_API_KEY')
+            if 'fred' not in self.config:
+                self.config['fred'] = {}
+            self.config['fred']['api_key'] = os.getenv('FRED_API_KEY')
         
         # AWS
         if os.getenv('AWS_ACCESS_KEY_ID'):
@@ -65,7 +67,7 @@ class Config:
     
     @property
     def fred_api_key(self) -> str:
-        return self.config.get('fred_api_key')
+        return self.config.get('fred', {}).get('api_key')
     
     @property
     def aws_config(self) -> Dict[str, str]:
@@ -77,7 +79,7 @@ class Config:
     
     @property
     def fred_metrics(self) -> list:
-        return self.config.get('data_collection', {}).get('fred_metrics', [])
+        return self.config.get('fred', {}).get('metrics', [])
 
 
 # Singleton instance
