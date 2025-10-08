@@ -1,0 +1,51 @@
+# Personal notes and getting started guide
+GET_STARTED.md
+START_HERE_FIRST.md
+GITHUB_UPLOAD_GUIDE.md
+LINKEDIN_POST_TEMPLATES.md
+ACTION_PLAN.md
+LAUNCH_SUMMARY.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (if any large datasets)
+*.csv
+*.parquet
+*.json
+!**/example*.csv
+!**/sample*.csv
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Environment variables
+.env
+.env.local
+
