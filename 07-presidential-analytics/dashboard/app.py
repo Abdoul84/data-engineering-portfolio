@@ -127,96 +127,124 @@ def create_demo_data():
 
 @st.cache_data
 def load_comprehensive_data():
-    """Load comprehensive Senegal data from Snowflake or demo data"""
+    """Load comprehensive Senegal data from Snowflake - REAL DATA ONLY"""
+    
+    # Get Snowflake configuration from Streamlit secrets
     try:
-        # Try to load from Streamlit secrets first
-        try:
-            # Streamlit Cloud secrets
-            config = st.secrets["snowflake"]
-            st.info("🔐 Using Streamlit Cloud secrets - connecting to Snowflake...")
-            
-            # Connect to Snowflake
-            conn = snowflake.connector.connect(
-                account=config['account'],
-                user=config['user'],
-                password=config['password'],
-                warehouse=config['warehouse'],
-                database=config['database'],
-                schema=config['schema']
-            )
-            
-            cursor = conn.cursor()
-            
-            # Get presidents data
-            cursor.execute("""
-                SELECT PRESIDENT_NAME, PARTY, START_DATE, END_DATE 
-                FROM presidents_dim 
-                WHERE IS_ACTIVE = TRUE 
-                ORDER BY START_DATE
-            """)
-            presidents_data = cursor.fetchall()
-            presidents_df = pd.DataFrame(presidents_data, columns=['PRESIDENT_NAME', 'PARTY', 'START_DATE', 'END_DATE'])
-            
-            # Get development facts data (using empty country code as it's Senegal)
-            cursor.execute("""
-                SELECT YEAR, INDICATOR_CODE, INDICATOR_NAME, VALUE
-                FROM development_facts 
-                WHERE COUNTRY_CODE = '' OR COUNTRY_CODE = 'SEN'
-                ORDER BY YEAR, INDICATOR_CODE
-            """)
-            dev_data = cursor.fetchall()
-            dev_df = pd.DataFrame(dev_data, columns=['YEAR', 'INDICATOR_CODE', 'INDICATOR_NAME', 'VALUE'])
-            
-            # Get ANSD population data (real population data)
-            cursor.execute("""
-                SELECT YEAR, TOTAL_POPULATION, URBAN_PERCENTAGE, POPULATION_GROWTH_RATE
-                FROM ansd_population 
-                ORDER BY YEAR
-            """)
-            pop_data = cursor.fetchall()
-            pop_df = pd.DataFrame(pop_data, columns=['YEAR', 'TOTAL_POPULATION', 'URBAN_PERCENTAGE', 'POPULATION_GROWTH_RATE'])
-            
-            # Also get development indicators for economic data
-            economic_indicators = ['NY.GDP.MKTP.KD.ZG', 'FP.CPI.TOTL.ZG', 'SL.UEM.TOTL.ZS', 'NE.TRD.GNFS.ZS']
-            econ_data = dev_df[dev_df['INDICATOR_CODE'].isin(economic_indicators)]
-            
-            if not econ_data.empty:
-                economic_df = econ_data.pivot_table(
-                    index='YEAR', 
-                    columns='INDICATOR_CODE', 
-                    values='VALUE', 
-                    aggfunc='mean'
-                ).reset_index()
-                
-                # Rename columns for better display
-                column_mapping = {
-                    'NY.GDP.MKTP.KD.ZG': 'GDP_Growth_Rate',
-                    'FP.CPI.TOTL.ZG': 'Inflation_Rate', 
-                    'SL.UEM.TOTL.ZS': 'Unemployment_Rate',
-                    'NE.TRD.GNFS.ZS': 'Trade_Balance_GDP'
-                }
-                
-                for old_col, new_col in column_mapping.items():
-                    if old_col in economic_df.columns:
-                        economic_df[new_col] = economic_df[old_col]
-            else:
-                # Create empty economic dataframe if no data
-                economic_df = pd.DataFrame(columns=['YEAR', 'GDP_Growth_Rate', 'Inflation_Rate', 'Unemployment_Rate', 'Trade_Balance_GDP'])
-            
-            cursor.close()
-            conn.close()
-            
-            return presidents_df, pop_df, economic_df
-            
-        except Exception as e:
-            st.warning(f"⚠️ Could not connect to Snowflake: {e}")
-            st.info("🔄 Using demo data instead...")
-            return create_demo_data()
-            
+        config = st.secrets["snowflake"]
+        st.info("🔐 Connecting to Snowflake with real data...")
     except Exception as e:
-        st.warning(f"⚠️ Error loading data: {e}")
-        st.info("🔄 Using demo data instead...")
-        return create_demo_data()
+        st.error("❌ **Snowflake secrets not configured!**")
+        st.markdown("""
+        ### 🔧 **To configure Snowflake secrets:**
+        
+        1. **Go to Streamlit Cloud**: https://share.streamlit.io/
+        2. **Find your app**: `senegalintelligence`
+        3. **Settings** → **Secrets**
+        4. **Add this configuration**:
+        ```toml
+        [snowflake]
+        account = "dsc96236.us-east-1"
+        user = "Abdoul84"
+        password = "tjrHPNim4Dz3EUk"
+        warehouse = "COMPUTE_WH"
+        database = "SENEGAL_ANALYTICS"
+        schema = "PUBLIC"
+        role = "ACCOUNTADMIN"
+        ```
+        5. **Save and redeploy**
+        
+        **This dashboard requires real Snowflake data - no demo mode available.**
+        """)
+        st.stop()
+    
+    try:
+        # Connect to Snowflake
+        conn = snowflake.connector.connect(
+            account=config['account'],
+            user=config['user'],
+            password=config['password'],
+            warehouse=config['warehouse'],
+            database=config['database'],
+            schema=config['schema']
+        )
+        
+        cursor = conn.cursor()
+        
+        # Get presidents data
+        cursor.execute("""
+            SELECT PRESIDENT_NAME, PARTY, START_DATE, END_DATE 
+            FROM presidents_dim 
+            WHERE IS_ACTIVE = TRUE 
+            ORDER BY START_DATE
+        """)
+        presidents_data = cursor.fetchall()
+        presidents_df = pd.DataFrame(presidents_data, columns=['PRESIDENT_NAME', 'PARTY', 'START_DATE', 'END_DATE'])
+        
+        # Get development facts data (using empty country code as it's Senegal)
+        cursor.execute("""
+            SELECT YEAR, INDICATOR_CODE, INDICATOR_NAME, VALUE
+            FROM development_facts 
+            WHERE COUNTRY_CODE = '' OR COUNTRY_CODE = 'SEN'
+            ORDER BY YEAR, INDICATOR_CODE
+        """)
+        dev_data = cursor.fetchall()
+        dev_df = pd.DataFrame(dev_data, columns=['YEAR', 'INDICATOR_CODE', 'INDICATOR_NAME', 'VALUE'])
+        
+        # Get ANSD population data (real population data)
+        cursor.execute("""
+            SELECT YEAR, TOTAL_POPULATION, URBAN_PERCENTAGE, POPULATION_GROWTH_RATE
+            FROM ansd_population 
+            ORDER BY YEAR
+        """)
+        pop_data = cursor.fetchall()
+        pop_df = pd.DataFrame(pop_data, columns=['YEAR', 'TOTAL_POPULATION', 'URBAN_PERCENTAGE', 'POPULATION_GROWTH_RATE'])
+        
+        # Also get development indicators for economic data
+        economic_indicators = ['NY.GDP.MKTP.KD.ZG', 'FP.CPI.TOTL.ZG', 'SL.UEM.TOTL.ZS', 'NE.TRD.GNFS.ZS']
+        econ_data = dev_df[dev_df['INDICATOR_CODE'].isin(economic_indicators)]
+        
+        if not econ_data.empty:
+            economic_df = econ_data.pivot_table(
+                index='YEAR', 
+                columns='INDICATOR_CODE', 
+                values='VALUE', 
+                aggfunc='mean'
+            ).reset_index()
+            
+            # Rename columns for better display
+            column_mapping = {
+                'NY.GDP.MKTP.KD.ZG': 'GDP_Growth_Rate',
+                'FP.CPI.TOTL.ZG': 'Inflation_Rate', 
+                'SL.UEM.TOTL.ZS': 'Unemployment_Rate',
+                'NE.TRD.GNFS.ZS': 'Trade_Balance_GDP'
+            }
+            
+            for old_col, new_col in column_mapping.items():
+                if old_col in economic_df.columns:
+                    economic_df[new_col] = economic_df[old_col]
+        else:
+            # Create empty economic dataframe if no data
+            economic_df = pd.DataFrame(columns=['YEAR', 'GDP_Growth_Rate', 'Inflation_Rate', 'Unemployment_Rate', 'Trade_Balance_GDP'])
+        
+        cursor.close()
+        conn.close()
+        
+        return presidents_df, pop_df, economic_df
+        
+    except Exception as e:
+        st.error(f"❌ **Failed to connect to Snowflake**: {e}")
+        st.markdown("""
+        ### 🔧 **Troubleshooting:**
+        
+        1. **Check your Snowflake credentials** in the secrets configuration
+        2. **Verify your Snowflake account is active**
+        3. **Ensure the database and schema exist**
+        4. **Check your network connection**
+        
+        **This dashboard requires a working Snowflake connection.**
+        """)
+        st.stop()
 
 # Load real data
 data = load_comprehensive_data()
@@ -243,11 +271,7 @@ st.sidebar.markdown("""
 - 📈 **Trend Analysis**
 """)
 
-# Check if we're using demo data
-if 'demo_data' in locals() and demo_data:
-    st.sidebar.markdown("**📝 Note:** Using demo data (Snowflake not configured)")
-else:
-    st.sidebar.markdown("**📝 Note:** Using real data from Snowflake")
+st.sidebar.markdown("**📝 Note:** Real data from Snowflake database")
 
 # Create comparative data (West African countries)
 def create_comparative_data():
