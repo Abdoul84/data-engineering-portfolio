@@ -20,28 +20,55 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for mobile responsiveness
+# Custom CSS for mobile responsiveness and better contrast
 st.markdown("""
-    <style>
+<style>
+    /* Main page background */
+    .main .block-container {
+        background-color: #f8f9fa;
+        padding: 2rem 1rem;
+    }
+    
+    /* Header styling */
     .main-header {
         font-size: 2.5rem;
         font-weight: bold;
         color: #2E8B57;
         text-align: center;
         margin-bottom: 1rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
     .subtitle {
         font-size: 1.2rem;
-        color: #666;
+        color: #495057;
         text-align: center;
         margin-bottom: 2rem;
+        font-weight: 500;
     }
     .metric-card {
-        background: linear-gradient(90deg, #f8f9fa, #e9ecef);
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #2E8B57;
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 2px solid #2E8B57;
         margin: 0.5rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        color: #2c3e50;
+    }
+    .metric-card h2 {
+        color: #1a252f !important;
+        font-weight: bold !important;
+        font-size: 2.2rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    .metric-card h4 {
+        color: #34495e !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .metric-card p {
+        color: #7f8c8d !important;
+        font-size: 0.9rem !important;
+        margin: 0 !important;
     }
     .region-card {
         background: #f8f9fa;
@@ -50,9 +77,25 @@ st.markdown("""
         border: 1px solid #dee2e6;
         margin: 0.5rem 0;
     }
+    /* Chart container styling */
+    .stPlotlyChart {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Section headers */
+    .stHeader {
+        color: #2c3e50 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Mobile responsiveness */
     @media (max-width: 768px) {
         .main-header { font-size: 2rem; }
         .subtitle { font-size: 1rem; }
+        .metric-card h2 { font-size: 1.8rem !important; }
     }
     </style>
     """, unsafe_allow_html=True)
