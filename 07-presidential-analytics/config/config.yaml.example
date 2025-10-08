@@ -1,0 +1,44 @@
+# Configuration Example
+# Copy this to config.yaml and fill in your credentials
+
+# API Keys
+fred_api_key: "YOUR_FRED_API_KEY_HERE"
+
+# AWS Configuration
+aws:
+  access_key_id: "YOUR_AWS_ACCESS_KEY"
+  secret_access_key: "YOUR_AWS_SECRET_KEY"
+  region: "us-east-1"
+  s3_bucket: "your-presidential-analytics-bucket"
+  s3_prefix: "presidential-data"
+
+# Snowflake Configuration
+snowflake:
+  account: "your-account.region"
+  user: "YOUR_USERNAME"
+  password: "YOUR_PASSWORD"
+  warehouse: "COMPUTE_WH"
+  database: "PRESIDENTIAL_ANALYTICS"
+  schema: "PUBLIC"
+  role: "ACCOUNTADMIN"
+
+# Data Collection Settings
+data_collection:
+  start_year: 1945  # End of WW2
+  end_year: 2024
+  fred_metrics:
+    - GDP            # Gross Domestic Product
+    - UNRATE         # Unemployment Rate
+    - CPIAUCSL       # Consumer Price Index
+    - SP500          # S&P 500 Index
+    - DFF            # Federal Funds Rate
+    - DEXUSEU        # US/Euro Exchange Rate
+    - MORTGAGE30US   # 30-Year Mortgage Rate
+    - PAYEMS         # Total Nonfarm Payroll
+
+# Dashboard Settings
+dashboard:
+  title: "Presidential Economic Performance Dashboard"
+  port: 8501
+  theme: "light"
+

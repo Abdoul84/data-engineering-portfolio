@@ -36,7 +36,10 @@ This portfolio demonstrates my hands-on expertise in **data engineering**, showc
 | **Languages** | SQL, Python, PySpark |
 | **Big Data** | Apache Spark, Apache Iceberg, Apache Flink |
 | **Streaming** | Apache Kafka, Real-Time Processing |
-| **Databases** | PostgreSQL |
+| **Databases** | PostgreSQL, Snowflake |
+| **Cloud** | AWS S3, Snowflake Data Warehouse |
+| **APIs** | FRED API, REST APIs |
+| **Visualization** | Streamlit, Plotly |
 | **Infrastructure** | Docker, Docker Compose |
 | **Testing** | pytest, Unit Testing, Data Quality |
 | **Version Control** | Git, GitHub |
@@ -153,6 +156,25 @@ Designed comprehensive KPI frameworks and experimentation strategies with proper
 
 ---
 
+### 7. 🏛️ [Presidential Analytics Pipeline](07-presidential-analytics/)
+**Modern Data Pipeline: API → S3 → Snowflake → Dashboard**
+
+Built an end-to-end data pipeline analyzing US presidential economic performance with real-time data ingestion, cloud storage, and interactive visualization.
+
+**Key Achievements**:
+- Integrated FRED API for automated economic data collection
+- Implemented S3 data lake with partitioned storage
+- Designed Snowflake data warehouse with SCD Type 2 dimensions
+- Built incremental merge strategy for cost-efficient updates
+- Created interactive Streamlit dashboard with real-time filtering
+
+**Technologies**: Python, AWS S3, Snowflake, Streamlit, FRED API  
+**Skills**: API Integration, Cloud Data Lakes, Data Warehousing, Dashboard Development
+
+[View Project →](07-presidential-analytics/)
+
+---
+
 ## 🏆 Project Highlights
 
 ### **Most Complex Implementations**
@@ -172,11 +194,13 @@ Designed comprehensive KPI frameworks and experimentation strategies with proper
 
 ## 📊 Portfolio Metrics
 
-- **6 Major Projects** across analytics and infrastructure
+- **7 Major Projects** across analytics and infrastructure
 - **50+ SQL Queries** demonstrating advanced analytical techniques
-- **10+ Python Jobs** for distributed data processing
-- **100+ Hours** of hands-on development
+- **15+ Python Scripts** for data pipelines and distributed processing
+- **Interactive Dashboard** with real-time filtering and visualization
+- **150+ Hours** of hands-on development
 - **Full Test Coverage** with unit and integration tests
+- **Cloud Integration** with AWS S3 and Snowflake
 
 ---
 
@@ -225,6 +249,7 @@ data-engineering-portfolio/
 ├── 04-streaming-flink/          # Real-Time Processing
 ├── 05-analytical-patterns/      # Growth, Retention, Funnels
 ├── 06-experimentation/          # A/B Testing, KPIs
+├── 07-presidential-analytics/   # API → S3 → Snowflake → Dashboard
 ├── docs/                        # Additional documentation
 ├── assets/                      # Diagrams, screenshots
 └── README.md                    # This file
