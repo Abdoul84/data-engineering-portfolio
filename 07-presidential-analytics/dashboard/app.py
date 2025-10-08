@@ -673,7 +673,7 @@ st.markdown("""
 st.markdown("""
 <div style="text-align: center; color: #888; padding: 0.5rem; margin-top: 1rem; border-top: 1px solid #eee;">
     <small>
-        <strong>Developed by:</strong> Abdoul Diallo<br>
+        <strong>Developed by:</strong> Abdoul Top<br>
         <em>Data Engineering Portfolio Project</em><br>
         <a href="https://github.com/Abdoul84/data-engineering-portfolio" style="color: #2E8B57; text-decoration: none;">📁 View Source Code</a> • 
         <a href="https://www.linkedin.com/in/abdoul-diallo" style="color: #2E8B57; text-decoration: none;">💼 LinkedIn</a>
