@@ -1,11 +1,11 @@
-# 🚀 Quick Start Guide
+# 🚀 Quick Start Guide - Senegal Presidential Analytics
 
-Get the Presidential Analytics Pipeline running in minutes!
+Get the Senegal Presidential Analytics Pipeline running in minutes!
 
 ## Prerequisites
 
 1. **Python 3.8+** installed
-2. **FRED API Key** (free from https://fred.stlouisfed.org/docs/api/api_key.html)
+2. **NO API KEYS NEEDED!** 🎉 World Bank API is completely free and open
 3. **AWS Account** (for S3) - optional for local testing
 4. **Snowflake Account** - optional for local testing
 
@@ -18,33 +18,23 @@ cd 07-presidential-analytics
 pip install -r config/requirements.txt
 ```
 
-### Step 2: Configure (Minimal)
+### Step 2: Collect Data (No Configuration Needed!)
 
-Copy the example config:
-```bash
-cp config/config.yaml.example config/config.yaml
-```
-
-Edit `config/config.yaml` and add your FRED API key:
-```yaml
-fred_api_key: "YOUR_ACTUAL_FRED_API_KEY"
-```
-
-### Step 3: Collect Data
-
-Run the data collection scripts:
+Run the data collection scripts - NO API KEY REQUIRED:
 
 ```bash
-# Collect economic data from FRED
-python src/ingest/fred_api.py
+# Collect Senegal development data from World Bank API (FREE!)
+python src/ingest/worldbank_api.py
 
-# Collect presidential data
+# Collect Senegalese presidential data
 python src/ingest/presidents_data.py
 ```
 
+✨ **That's it!** The World Bank API is completely free and requires no authentication.
+
 This will save data to `data/raw/` directory.
 
-### Step 4: Launch Dashboard
+### Step 3: Launch Dashboard
 
 ```bash
 streamlit run dashboard/app.py
@@ -52,7 +42,14 @@ streamlit run dashboard/app.py
 
 The dashboard will open in your browser at http://localhost:8501
 
-🎉 **Done!** You now have a working presidential analytics dashboard!
+🎉 **Done!** You now have a working Senegal presidential analytics dashboard!
+
+### What You'll See
+
+- 📊 60+ years of Senegal's development data
+- 🇸🇳 5 presidents from independence to present
+- 📈 Economic, social, and infrastructure metrics
+- 🎯 Interactive filtering and comparisons
 
 ---
 
@@ -131,12 +128,12 @@ FROM economic_facts;
 
 ## Common Issues & Solutions
 
-### Issue: "FRED API Key not configured"
+### Issue: "No module named 'requests'"
 
-**Solution**: Make sure you've:
-1. Copied `config.yaml.example` to `config.yaml`
-2. Added your actual FRED API key
-3. Or set environment variable: `export FRED_API_KEY="your-key"`
+**Solution**: Install dependencies:
+```bash
+pip install -r config/requirements.txt
+```
 
 ### Issue: "boto3.exceptions.NoCredentialsError"
 
@@ -171,12 +168,13 @@ export SNOWFLAKE_PASSWORD="your-password"
 
 ## Environment Variables Reference
 
-For production, use environment variables instead of config file:
+For production deployment (cloud only):
 
 ```bash
-# FRED API
-export FRED_API_KEY="your-key"
+# NO API KEYS NEEDED FOR DATA COLLECTION!
+# World Bank API is completely free
 
+# Only needed for cloud deployment:
 # AWS
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
@@ -187,7 +185,7 @@ export SNOWFLAKE_ACCOUNT="your-account.region"
 export SNOWFLAKE_USER="your-user"
 export SNOWFLAKE_PASSWORD="your-password"
 export SNOWFLAKE_WAREHOUSE="COMPUTE_WH"
-export SNOWFLAKE_DATABASE="PRESIDENTIAL_ANALYTICS"
+export SNOWFLAKE_DATABASE="SENEGAL_ANALYTICS"
 ```
 
 ---

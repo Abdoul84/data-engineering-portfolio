@@ -1,8 +1,8 @@
 # Configuration Example
 # Copy this to config.yaml and fill in your credentials
 
-# API Keys
-fred_api_key: "YOUR_FRED_API_KEY_HERE"
+# API Keys - World Bank API requires NO API KEY! (Free and open)
+# No API keys needed for data collection!
 
 # AWS Configuration
 aws:
@@ -24,21 +24,15 @@ snowflake:
 
 # Data Collection Settings
 data_collection:
-  start_year: 1945  # End of WW2
+  country: "Senegal"
+  country_code: "SN"
+  start_year: 1960  # Senegal Independence
   end_year: 2024
-  fred_metrics:
-    - GDP            # Gross Domestic Product
-    - UNRATE         # Unemployment Rate
-    - CPIAUCSL       # Consumer Price Index
-    - SP500          # S&P 500 Index
-    - DFF            # Federal Funds Rate
-    - DEXUSEU        # US/Euro Exchange Rate
-    - MORTGAGE30US   # 30-Year Mortgage Rate
-    - PAYEMS         # Total Nonfarm Payroll
 
 # Dashboard Settings
 dashboard:
-  title: "Presidential Economic Performance Dashboard"
+  title: "Senegal Presidential Analytics Dashboard"
+  subtitle: "60+ Years of Democratic Progress"
   port: 8501
   theme: "light"
 

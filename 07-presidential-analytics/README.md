@@ -1,10 +1,12 @@
-# 📊 Presidential Analytics Pipeline
+# 📊 Senegal Presidential Analytics Pipeline
 
 **A Modern Data Pipeline: API → S3 → Snowflake → Dashboard**
 
 ## 🎯 Project Overview
 
-This project demonstrates a production-grade data pipeline that ingests, transforms, and visualizes US presidential administration data alongside economic and country performance metrics. The pipeline enables historical comparison of presidential terms using modern data infrastructure.
+This project demonstrates a production-grade data pipeline that ingests, transforms, and visualizes **Senegalese presidential administration data** alongside economic and development metrics from international organizations. The pipeline enables historical comparison of Senegal's progress across different presidential terms using modern data infrastructure and reliable public APIs.
+
+**Why Senegal?** This unique project showcases data engineering skills while analyzing a fascinating African democracy with 60+ years of peaceful transitions and economic development.
 
 ## 🏗️ Architecture
 
@@ -20,22 +22,32 @@ Snowflake (Incremental Refresh)
 Interactive Web Dashboard
 ```
 
-## 📈 Data Sources
+## 📈 Data Sources (All Free & Reliable!)
 
-### Economic & Country Metrics
-- **FRED API** (Federal Reserve Economic Data)
-  - GDP Growth
-  - Unemployment Rate
-  - Inflation (CPI)
-  - Stock Market Performance (S&P 500)
-  - Consumer Confidence
-  - Trade Balance
+### Economic & Development Metrics
+- **World Bank API** (Primary data source - comprehensive, reliable, free)
+  - GDP Growth & GDP per capita
+  - Population & Demographics
+  - Poverty rates & Income inequality
+  - Education indicators (literacy, enrollment)
+  - Health metrics (life expectancy, mortality)
+  - Infrastructure (electricity access, internet usage)
+  - Trade & Investment flows
+  - Agricultural production
 
-### Presidential Data
-- Presidential terms and dates
-- Political party
-- Major legislative achievements
-- Administration details
+- **REST Countries API** 
+  - Country metadata (capital, languages, currency)
+  - Geographic information
+
+- **African Development Bank Open Data** (Optional)
+  - Regional development indicators
+  - Infrastructure projects
+
+### Presidential Data (Manually curated)
+- Senegalese presidents from independence (1960-present)
+- Political party affiliations
+- Terms and transition dates
+- Major policy initiatives per administration
 
 ## 🎯 Key Features
 
@@ -134,15 +146,17 @@ cd 07-presidential-analytics
 pip install -r config/requirements.txt
 ```
 
-3. **Configure credentials**
+3. **Configure credentials** (Optional for World Bank API - it's free and open!)
 ```bash
 cp config/config.yaml.example config/config.yaml
-# Edit config.yaml with your credentials
+# Edit config.yaml with your credentials (only needed for AWS/Snowflake)
 ```
 
-4. **Set environment variables**
+4. **Set environment variables** (Optional - only for cloud deployment)
 ```bash
-export FRED_API_KEY="your-fred-api-key"
+# World Bank API is FREE and requires NO API key!
+
+# Only needed for cloud deployment:
 export AWS_ACCESS_KEY_ID="your-aws-key"
 export AWS_SECRET_ACCESS_KEY="your-aws-secret"
 export SNOWFLAKE_ACCOUNT="your-account"

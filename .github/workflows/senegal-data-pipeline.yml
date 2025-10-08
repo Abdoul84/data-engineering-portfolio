@@ -1,0 +1,151 @@
+name: Senegal Data Pipeline - Automated Data Collection
+
+# Schedule: Run every Monday at 8 AM UTC (can adjust as needed)
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 8 AM UTC
+  
+  # Also allow manual trigger
+  workflow_dispatch:
+  
+  # Optionally run on push to main (for testing)
+  # push:
+  #   branches: [ main ]
+  #   paths:
+  #     - '07-presidential-analytics/**'
+
+jobs:
+  collect-and-load-data:
+    runs-on: ubuntu-latest
+    
+    # Require Snowflake credentials
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: ✅ Verify Snowflake credentials
+      run: |
+        if [ -z "$SNOWFLAKE_ACCOUNT" ] || [ -z "$SNOWFLAKE_USER" ] || [ -z "$SNOWFLAKE_PASSWORD" ]; then
+          echo "❌ ERROR: Snowflake credentials not configured!"
+          echo ""
+          echo "Required secrets:"
+          echo "  - SNOWFLAKE_ACCOUNT"
+          echo "  - SNOWFLAKE_USER"
+          echo "  - SNOWFLAKE_PASSWORD"
+          echo ""
+          echo "Add these in: Settings → Secrets and variables → Actions"
+          echo "See GITHUB_ACTIONS_SETUP.md for detailed instructions"
+          exit 1
+        fi
+        echo "✅ Snowflake credentials found"
+    
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    
+    - name: 📦 Install dependencies
+      run: |
+        cd 07-presidential-analytics
+        pip install -r config/requirements.txt
+    
+    - name: 🌍 Collect World Bank data for Senegal
+      run: |
+        cd 07-presidential-analytics
+        python src/ingest/worldbank_api.py
+      env:
+        # No API key needed for World Bank! 🎉
+        PYTHONUNBUFFERED: 1
+    
+    - name: 🇸🇳 Collect Senegalese Presidential data
+      run: |
+        cd 07-presidential-analytics
+        python src/ingest/presidents_data.py
+      env:
+        PYTHONUNBUFFERED: 1
+    
+    - name: ☁️ Upload to S3 (Optional)
+      if: ${{ secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' }}
+      run: |
+        cd 07-presidential-analytics
+        echo "📤 Uploading to S3..."
+        python src/ingest/s3_uploader.py || echo "⚠️ S3 upload skipped or failed (non-critical)"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-east-1
+      continue-on-error: true
+    
+    - name: ❄️ Load to Snowflake (REQUIRED)
+      run: |
+        cd 07-presidential-analytics
+        echo "📊 Loading data to Snowflake..."
+        python src/load/snowflake_loader.py
+      env:
+        SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+        SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+        SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+        SNOWFLAKE_DATABASE: SENEGAL_ANALYTICS
+        SNOWFLAKE_SCHEMA: PUBLIC
+        SNOWFLAKE_ROLE: ACCOUNTADMIN
+        PYTHONUNBUFFERED: 1
+    
+    - name: 📊 Generate summary report
+      run: |
+        echo "## 🇸🇳 Senegal Data Pipeline - Run Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Run Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Data Collection" >> $GITHUB_STEP_SUMMARY
+        echo "✅ World Bank API data collected" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Presidential data updated" >> $GITHUB_STEP_SUMMARY
+        if [ -n "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
+          echo "✅ Data uploaded to S3" >> $GITHUB_STEP_SUMMARY
+        fi
+        if [ -n "${{ secrets.SNOWFLAKE_ACCOUNT }}" ]; then
+          echo "✅ Data loaded to Snowflake" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Data Files Generated" >> $GITHUB_STEP_SUMMARY
+        cd 07-presidential-analytics/data/raw 2>/dev/null || echo "No data directory"
+        if [ -d "07-presidential-analytics/data/raw" ]; then
+          ls -lh 07-presidential-analytics/data/raw/*.parquet 2>/dev/null | tail -5 >> $GITHUB_STEP_SUMMARY || echo "No parquet files found"
+        fi
+    
+    - name: 📈 Upload data artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: senegal-data-${{ github.run_number }}
+        path: 07-presidential-analytics/data/raw/*.parquet
+        retention-days: 30
+    
+    - name: 🔔 Notify on failure
+      if: failure()
+      run: |
+        echo "❌ Pipeline failed! Check the logs above."
+        echo "## ❌ Pipeline Failed" >> $GITHUB_STEP_SUMMARY
+        echo "Please check the logs for details." >> $GITHUB_STEP_SUMMARY
+
+# ============================================================================
+# SETUP REQUIRED:
+# ============================================================================
+# Go to: Settings → Secrets and variables → Actions
+# Add these REQUIRED secrets:
+#   ✅ SNOWFLAKE_ACCOUNT (format: account_locator.region, e.g., xy12345.us-east-1)
+#   ✅ SNOWFLAKE_USER (your Snowflake username)
+#   ✅ SNOWFLAKE_PASSWORD (your Snowflake password)
+#
+# Optional secrets (for S3 storage):
+#   ⚪ AWS_ACCESS_KEY_ID
+#   ⚪ AWS_SECRET_ACCESS_KEY
+#
+# See GITHUB_ACTIONS_SETUP.md for detailed instructions
+# ============================================================================
+

@@ -1,10 +1,10 @@
 -- ====================================================================
 -- Presidents Dimension Table (SCD Type 2)
--- Tracks US Presidents and their administrations
+-- Tracks Senegalese Presidents and their administrations
 -- ====================================================================
 
-CREATE DATABASE IF NOT EXISTS PRESIDENTIAL_ANALYTICS;
-USE DATABASE PRESIDENTIAL_ANALYTICS;
+CREATE DATABASE IF NOT EXISTS SENEGAL_ANALYTICS;
+USE DATABASE SENEGAL_ANALYTICS;
 
 CREATE SCHEMA IF NOT EXISTS PUBLIC;
 USE SCHEMA PUBLIC;
@@ -42,7 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_presidents_party ON presidents_dim(party);
 CREATE INDEX IF NOT EXISTS idx_presidents_active ON presidents_dim(is_active);
 
 -- Comment the table
-COMMENT ON TABLE presidents_dim IS 'Dimension table tracking US Presidents with SCD Type 2 for historical changes';
+COMMENT ON TABLE presidents_dim IS 'Dimension table tracking Senegalese Presidents with SCD Type 2 for historical changes (1960-present)';
 
 -- Column comments
 COMMENT ON COLUMN presidents_dim.president_key IS 'Surrogate key for SCD Type 2';

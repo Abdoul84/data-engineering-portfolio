@@ -1,6 +1,7 @@
 """
-Presidential Data Collection
-Compiles US presidential terms and administration information
+Presidential Data Collection - SENEGAL
+Compiles Senegalese presidential terms and administration information
+From independence (1960) to present
 """
 import pandas as pd
 from datetime import datetime
@@ -14,143 +15,68 @@ logger = setup_logger('presidents_ingestion')
 
 
 class PresidentsDataCollector:
-    """Collect and structure US Presidential data"""
+    """Collect and structure Senegalese Presidential data"""
     
     def __init__(self):
         self.presidents_data = self._get_presidents_data()
-        logger.info(f"Initialized with {len(self.presidents_data)} presidents")
+        logger.info(f"Initialized with {len(self.presidents_data)} Senegalese presidents")
     
     def _get_presidents_data(self) -> list:
         """
-        Comprehensive presidential data since 1945 (end of WW2)
+        Comprehensive presidential data since independence (1960)
+        Senegal - A model African democracy with peaceful transitions
         Data includes: name, party, start date, end date, key achievements
         """
         return [
             {
-                'president_id': 33,
-                'name': 'Harry S. Truman',
-                'party': 'Democratic',
-                'start_date': '1945-04-12',
-                'end_date': '1953-01-20',
+                'president_id': 1,
+                'name': 'Léopold Sédar Senghor',
+                'party': 'Union Progressiste Sénégalaise (UPS)',
+                'start_date': '1960-09-05',  # Independence Day
+                'end_date': '1980-12-31',
+                'terms': 4,
+                'key_policies': 'Post-independence nation building, Negritude philosophy, Agricultural development, Francophonie leadership',
+                'notable': 'Poet-president, voluntarily stepped down'
+            },
+            {
+                'president_id': 2,
+                'name': 'Abdou Diouf',
+                'party': 'Parti Socialiste (PS)',
+                'start_date': '1981-01-01',
+                'end_date': '2000-04-01',
+                'terms': 3,
+                'key_policies': 'Economic liberalization, Multi-party democracy, Regional integration (ECOWAS), Structural adjustment programs',
+                'notable': 'Peaceful transition after electoral defeat - rare in Africa'
+            },
+            {
+                'president_id': 3,
+                'name': 'Abdoulaye Wade',
+                'party': 'Parti Démocratique Sénégalais (PDS)',
+                'start_date': '2000-04-01',
+                'end_date': '2012-04-02',
                 'terms': 2,
-                'key_policies': 'Marshall Plan, NATO, Fair Deal, Korean War'
+                'key_policies': 'Infrastructure modernization (highways, airport), NEPAD initiative, Constitutional reforms, Dakar Port expansion',
+                'notable': 'First opposition candidate to win presidency'
             },
             {
-                'president_id': 34,
-                'name': 'Dwight D. Eisenhower',
-                'party': 'Republican',
-                'start_date': '1953-01-20',
-                'end_date': '1961-01-20',
+                'president_id': 4,
+                'name': 'Macky Sall',
+                'party': 'Alliance pour la République (APR)',
+                'start_date': '2012-04-02',
+                'end_date': '2024-04-02',
                 'terms': 2,
-                'key_policies': 'Interstate Highway System, Civil Rights Act of 1957'
+                'key_policies': 'Plan Sénégal Émergent (PSE), Infrastructure investments, Oil & gas development, Education reforms, COVID-19 response',
+                'notable': 'Committed to not running for 3rd term, respected term limits'
             },
             {
-                'president_id': 35,
-                'name': 'John F. Kennedy',
-                'party': 'Democratic',
-                'start_date': '1961-01-20',
-                'end_date': '1963-11-22',
-                'terms': 1,
-                'key_policies': 'Space Program, Peace Corps, Civil Rights'
-            },
-            {
-                'president_id': 36,
-                'name': 'Lyndon B. Johnson',
-                'party': 'Democratic',
-                'start_date': '1963-11-22',
-                'end_date': '1969-01-20',
-                'terms': 1,
-                'key_policies': 'Great Society, Medicare, Civil Rights Act of 1964'
-            },
-            {
-                'president_id': 37,
-                'name': 'Richard Nixon',
-                'party': 'Republican',
-                'start_date': '1969-01-20',
-                'end_date': '1974-08-09',
-                'terms': 2,
-                'key_policies': 'EPA, China Relations, Watergate'
-            },
-            {
-                'president_id': 38,
-                'name': 'Gerald Ford',
-                'party': 'Republican',
-                'start_date': '1974-08-09',
-                'end_date': '1977-01-20',
-                'terms': 1,
-                'key_policies': 'Nixon Pardon, Helsinki Accords'
-            },
-            {
-                'president_id': 39,
-                'name': 'Jimmy Carter',
-                'party': 'Democratic',
-                'start_date': '1977-01-20',
-                'end_date': '1981-01-20',
-                'terms': 1,
-                'key_policies': 'Camp David Accords, Energy Policy, Iran Hostage Crisis'
-            },
-            {
-                'president_id': 40,
-                'name': 'Ronald Reagan',
-                'party': 'Republican',
-                'start_date': '1981-01-20',
-                'end_date': '1989-01-20',
-                'terms': 2,
-                'key_policies': 'Reaganomics, Cold War Escalation, Tax Cuts'
-            },
-            {
-                'president_id': 41,
-                'name': 'George H. W. Bush',
-                'party': 'Republican',
-                'start_date': '1989-01-20',
-                'end_date': '1993-01-20',
-                'terms': 1,
-                'key_policies': 'Gulf War, Fall of USSR, ADA Act'
-            },
-            {
-                'president_id': 42,
-                'name': 'Bill Clinton',
-                'party': 'Democratic',
-                'start_date': '1993-01-20',
-                'end_date': '2001-01-20',
-                'terms': 2,
-                'key_policies': 'NAFTA, Budget Surplus, Tech Boom'
-            },
-            {
-                'president_id': 43,
-                'name': 'George W. Bush',
-                'party': 'Republican',
-                'start_date': '2001-01-20',
-                'end_date': '2009-01-20',
-                'terms': 2,
-                'key_policies': '9/11 Response, Iraq War, Medicare Part D, Financial Crisis'
-            },
-            {
-                'president_id': 44,
-                'name': 'Barack Obama',
-                'party': 'Democratic',
-                'start_date': '2009-01-20',
-                'end_date': '2017-01-20',
-                'terms': 2,
-                'key_policies': 'ACA (Obamacare), Economic Recovery, Paris Climate Agreement'
-            },
-            {
-                'president_id': 45,
-                'name': 'Donald Trump',
-                'party': 'Republican',
-                'start_date': '2017-01-20',
-                'end_date': '2021-01-20',
-                'terms': 1,
-                'key_policies': 'Tax Cuts, Tariffs, COVID-19 Response'
-            },
-            {
-                'president_id': 46,
-                'name': 'Joe Biden',
-                'party': 'Democratic',
-                'start_date': '2021-01-20',
+                'president_id': 5,
+                'name': 'Bassirou Diomaye Faye',
+                'party': 'PASTEF (Patriotes Africains du Sénégal)',
+                'start_date': '2024-04-02',
                 'end_date': None,  # Current president
                 'terms': 1,
-                'key_policies': 'Infrastructure Bill, COVID Relief, Climate Action'
+                'key_policies': 'Economic sovereignty, Anti-corruption, Youth employment, Natural resources renegotiation',
+                'notable': 'Youngest elected president in Senegal, released from prison to run'
             }
         ]
     
@@ -235,15 +161,18 @@ def main():
     collector.save_to_file(date_mapping_df, mapping_file)
     
     # Print summary
-    print("\n" + "="*60)
-    print("Presidential Data Collection Summary")
-    print("="*60)
+    print("\n" + "="*70)
+    print("Presidential Data Collection Summary - SENEGAL")
+    print("="*70)
+    print(f"Country: Senegal (Independence: September 5, 1960)")
     print(f"Total presidents: {len(presidents_df)}")
     print(f"Date range: {presidents_df['start_date'].min()} to {datetime.now().strftime('%Y-%m-%d')}")
+    print(f"Years of democracy: {(datetime.now() - presidents_df['start_date'].min()).days / 365:.1f} years")
     print(f"\nPresidents by party:")
     print(presidents_df['party'].value_counts())
-    print(f"\nAverage tenure: {presidents_df['tenure_days'].mean():.0f} days")
-    print("="*60)
+    print(f"\nAverage tenure: {presidents_df['tenure_days'].mean():.0f} days ({presidents_df['tenure_days'].mean()/365:.1f} years)")
+    print("\n🇸🇳 Senegal: A model of African democracy with peaceful transitions")
+    print("="*70)
     
     logger.info("Presidential data collection completed successfully")
 
