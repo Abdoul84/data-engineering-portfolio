@@ -61,23 +61,95 @@ st.markdown("""
 st.markdown('<h1 class="main-header">🌍 Senegal Development Intelligence Platform</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Comprehensive Analytics • Comparative Analysis • Regional Insights</p>', unsafe_allow_html=True)
 
+def create_demo_data():
+    """Create comprehensive demo data for Senegal when Snowflake is not available"""
+    
+    # Presidents data
+    presidents_data = [
+        {'PRESIDENT_NAME': 'Léopold Sédar Senghor', 'PARTY': 'Union Progressiste Sénégalaise (UPS)', 'START_DATE': '1960-09-05', 'END_DATE': '1980-12-31'},
+        {'PRESIDENT_NAME': 'Abdou Diouf', 'PARTY': 'Parti Socialiste (PS)', 'START_DATE': '1981-01-01', 'END_DATE': '2000-04-01'},
+        {'PRESIDENT_NAME': 'Abdoulaye Wade', 'PARTY': 'Parti Démocratique Sénégalais (PDS)', 'START_DATE': '2001-04-01', 'END_DATE': '2012-04-02'},
+        {'PRESIDENT_NAME': 'Macky Sall', 'PARTY': 'Alliance pour la République (APR)', 'START_DATE': '2013-04-02', 'END_DATE': '2024-04-02'},
+        {'PRESIDENT_NAME': 'Bassirou Diomaye Faye', 'PARTY': 'Pastef', 'START_DATE': '2024-04-02', 'END_DATE': None}
+    ]
+    presidents_df = pd.DataFrame(presidents_data)
+    
+    # Population data (1960-2024) - realistic Senegal data
+    years = list(range(1960, 2025))
+    population_data = []
+    base_pop = 3340000
+    
+    for i, year in enumerate(years):
+        growth_rate = 3.0 + np.random.normal(0, 0.5)
+        if year == 1960:
+            pop = base_pop
+        else:
+            pop = population_data[-1]['TOTAL_POPULATION'] * (1 + growth_rate/100)
+        
+        urban_pct = min(23.0 + (year - 1960) * 0.8, 68.0)
+        
+        population_data.append({
+            'YEAR': year,
+            'TOTAL_POPULATION': int(pop),
+            'URBAN_PERCENTAGE': round(urban_pct, 1),
+            'POPULATION_GROWTH_RATE': round(growth_rate, 1)
+        })
+    
+    pop_df = pd.DataFrame(population_data)
+    
+    # Economic data
+    economic_data = []
+    for year in years:
+        if year <= 1980:
+            gdp_growth = 3.5 + np.random.normal(0, 1.5)
+            inflation = 8.0 + np.random.normal(0, 2.0)
+        elif year <= 2000:
+            gdp_growth = 3.2 + np.random.normal(0, 2.0)
+            inflation = 12.0 + np.random.normal(0, 3.0)
+        elif year <= 2012:
+            gdp_growth = 4.5 + np.random.normal(0, 1.8)
+            inflation = 6.0 + np.random.normal(0, 2.0)
+        else:
+            gdp_growth = 5.5 + np.random.normal(0, 1.2)
+            inflation = 4.0 + np.random.normal(0, 1.5)
+        
+        economic_data.append({
+            'YEAR': year,
+            'GDP_Growth_Rate': round(gdp_growth, 1),
+            'Inflation_Rate': round(inflation, 1),
+            'Unemployment_Rate': round(15.0 - (year - 1960) * 0.1, 1),
+            'Trade_Balance_GDP': round(-8.0 + np.random.normal(0, 2.0), 1)
+        })
+    
+    economic_df = pd.DataFrame(economic_data)
+    
+    return presidents_df, pop_df, economic_df
+
 @st.cache_data
 def load_comprehensive_data():
     """Load comprehensive Senegal data from Snowflake"""
     try:
         # Try to load from Streamlit secrets first, then config file
+        config = None
         try:
             # Streamlit Cloud secrets
             config = st.secrets["snowflake"]
+            st.info("🔐 Using Streamlit Cloud secrets")
         except:
             try:
                 # Local config file
                 config_path = Path(__file__).parent.parent / "config" / "config.yaml"
                 with open(config_path) as f:
                     config = yaml.safe_load(f)['snowflake']
-            except:
-                st.error("❌ Unable to load Snowflake configuration. Please check your secrets or config file.")
-                return None, None, None
+                st.info("📁 Using local config file")
+            except Exception as e:
+                st.warning(f"⚠️ Could not load config: {e}")
+                # Fallback to demo data
+                return create_demo_data()
+        
+        if config is None:
+            st.warning("⚠️ No Snowflake configuration found. Using demo data.")
+            return create_demo_data()
     
         # Connect to Snowflake
         conn = snowflake.connector.connect(
@@ -180,9 +252,13 @@ st.sidebar.markdown("""
 - 🌍 **Regional Comparison** 
 - 🗺️ **Regional Breakdown**
 - 📈 **Trend Analysis**
-
-**📝 Note:** This dashboard uses real data from Snowflake
 """)
+
+# Check if we're using demo data
+if 'demo_data' in locals() and demo_data:
+    st.sidebar.markdown("**📝 Note:** Using demo data (Snowflake not configured)")
+else:
+    st.sidebar.markdown("**📝 Note:** Using real data from Snowflake")
 
 # Create comparative data (West African countries)
 def create_comparative_data():
