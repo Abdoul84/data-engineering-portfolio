@@ -373,9 +373,9 @@ with tab1:
     st.header("🇸🇳 Senegal Development Overview")
     
     # Key metrics in responsive cards
-    col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
+with col1:
         if not pop_df.empty and 'TOTAL_POPULATION' in pop_df.columns:
             latest_pop = pop_df[pop_df['YEAR'] == pop_df['YEAR'].max()]['TOTAL_POPULATION'].iloc[0]
             st.markdown(f'''
@@ -467,8 +467,8 @@ with tab1:
             st.plotly_chart(fig_pop, use_container_width=True)
         else:
             st.info("Population data not available in current dataset")
-    
-    with col2:
+
+with col2:
         if not economic_df.empty and 'GDP_Growth_Rate' in economic_df.columns:
             fig_gdp = px.line(
                 economic_df,
@@ -665,7 +665,18 @@ st.markdown("""
 <div style="text-align: center; color: #666; padding: 1rem;">
     <strong>🌍 Senegal Development Intelligence Platform</strong><br>
     <small>Comprehensive Analytics • Comparative Analysis • Regional Insights<br>
-    Powered by Real Snowflake Data<br>
+    Powered by Real Snowflake Data & FRED API<br>
     Last Updated: """ + datetime.now().strftime('%B %d, %Y') + """</small>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style="text-align: center; color: #888; padding: 0.5rem; margin-top: 1rem; border-top: 1px solid #eee;">
+    <small>
+        <strong>Developed by:</strong> Abdoul Diallo<br>
+        <em>Data Engineering Portfolio Project</em><br>
+        <a href="https://github.com/Abdoul84/data-engineering-portfolio" style="color: #2E8B57; text-decoration: none;">📁 View Source Code</a> • 
+        <a href="https://www.linkedin.com/in/abdoul-diallo" style="color: #2E8B57; text-decoration: none;">💼 LinkedIn</a>
+    </small>
 </div>
 """, unsafe_allow_html=True)
