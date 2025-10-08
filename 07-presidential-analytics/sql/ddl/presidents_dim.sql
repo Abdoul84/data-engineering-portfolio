@@ -35,12 +35,6 @@ CREATE TABLE IF NOT EXISTS presidents_dim (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
 );
 
--- Create indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_presidents_id ON presidents_dim(president_id);
-CREATE INDEX IF NOT EXISTS idx_presidents_date ON presidents_dim(start_date, end_date);
-CREATE INDEX IF NOT EXISTS idx_presidents_party ON presidents_dim(party);
-CREATE INDEX IF NOT EXISTS idx_presidents_active ON presidents_dim(is_active);
-
 -- Comment the table
 COMMENT ON TABLE presidents_dim IS 'Dimension table tracking Senegalese Presidents with SCD Type 2 for historical changes (1960-present)';
 

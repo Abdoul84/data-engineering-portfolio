@@ -120,56 +120,22 @@ Implemented real-time streaming pipelines with sessionization logic and time-bas
 
 ---
 
-### 5. 📊 [Advanced Analytical Patterns](05-analytical-patterns/)
-**Growth, Retention, and Funnel Analysis**
 
-Implemented sophisticated analytical frameworks for product analytics including growth accounting, cohort analysis, and conversion funnels.
+### 5. 🏛️ [Senegal Development Intelligence Platform](07-presidential-analytics/)
+**Comprehensive Analytics: API → Snowflake → Mobile-Responsive Dashboard**
 
-**Key Achievements**:
-- Built growth accounting (new/retained/resurrected/churned)
-- Developed cohort retention analysis frameworks
-- Created multi-step funnel analysis
-- Implemented window-based trend analysis
-
-**Technologies**: SQL, PostgreSQL, Analytical SQL  
-**Skills**: Product Analytics, Growth Metrics, Cohort Analysis
-
-[View Project →](05-analytical-patterns/)
-
----
-
-### 6. 🧪 [KPI Design & Experimentation](06-experimentation/)
-**A/B Testing and Metrics Framework**
-
-Designed comprehensive KPI frameworks and experimentation strategies with proper statistical rigor and business alignment.
+Built a comprehensive development analytics platform analyzing Senegal's progress across multiple dimensions with comparative analysis and regional insights.
 
 **Key Achievements**:
-- Defined KPI hierarchies (leading vs. lagging indicators)
-- Designed A/B testing frameworks with proper allocation
-- Created hypotheses linking metrics to user behavior
-- Analyzed product user journeys for optimization
+- **390+ Data Points** across 6 dimensions (population, economy, health, education, infrastructure, social)
+- **65 Years** of historical data (1960-2024) with official ANSD population statistics
+- **Regional Analysis** of 11 Senegal regions with comparative insights
+- **West African Comparison** with 7 neighboring countries
+- **Mobile-responsive** dashboard with trend forecasting and projections
+- **Real-time data** integration from World Bank API and official sources
 
-**Technologies**: Statistical Analysis, Product Analytics  
-**Skills**: Experimentation, A/B Testing, KPI Design
-
-[View Project →](06-experimentation/)
-
----
-
-### 7. 🏛️ [Presidential Analytics Pipeline](07-presidential-analytics/)
-**Modern Data Pipeline: API → S3 → Snowflake → Dashboard**
-
-Built an end-to-end data pipeline analyzing US presidential economic performance with real-time data ingestion, cloud storage, and interactive visualization.
-
-**Key Achievements**:
-- Integrated FRED API for automated economic data collection
-- Implemented S3 data lake with partitioned storage
-- Designed Snowflake data warehouse with SCD Type 2 dimensions
-- Built incremental merge strategy for cost-efficient updates
-- Created interactive Streamlit dashboard with real-time filtering
-
-**Technologies**: Python, AWS S3, Snowflake, Streamlit, FRED API  
-**Skills**: API Integration, Cloud Data Lakes, Data Warehousing, Dashboard Development
+**Technologies**: Python, Snowflake, Streamlit, Plotly, World Bank API, ANSD Data  
+**Skills**: Multi-source Integration, Comparative Analytics, Mobile Development, Trend Forecasting
 
 [View Project →](07-presidential-analytics/)
 

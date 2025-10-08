@@ -139,13 +139,6 @@ CREATE TABLE IF NOT EXISTS presidents_dim (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
 );
 
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_presidents_id 
-  ON presidents_dim(president_id);
-  
-CREATE INDEX IF NOT EXISTS idx_presidents_active 
-  ON presidents_dim(is_active);
-
 -- Verify
 DESCRIBE TABLE presidents_dim;
 ```
@@ -191,16 +184,6 @@ CREATE TABLE IF NOT EXISTS development_facts (
     -- Unique constraint
     CONSTRAINT uk_development_obs UNIQUE (year, indicator_code)
 );
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_dev_year 
-  ON development_facts(year);
-  
-CREATE INDEX IF NOT EXISTS idx_dev_indicator 
-  ON development_facts(indicator_code);
-  
-CREATE INDEX IF NOT EXISTS idx_dev_president 
-  ON development_facts(president_id);
 
 -- Verify
 DESCRIBE TABLE development_facts;

@@ -41,12 +41,6 @@ CREATE TABLE IF NOT EXISTS development_facts (
 -- Clustering for query optimization (partition by year)
 ALTER TABLE development_facts CLUSTER BY (year, indicator_code);
 
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_dev_year ON development_facts(year);
-CREATE INDEX IF NOT EXISTS idx_dev_indicator ON development_facts(indicator_code);
-CREATE INDEX IF NOT EXISTS idx_dev_president ON development_facts(president_id);
-CREATE INDEX IF NOT EXISTS idx_dev_party ON development_facts(party);
-
 -- Comment the table
 COMMENT ON TABLE development_facts IS 'Fact table storing time-series development indicators from World Bank API for Senegal (1960-present)';
 
