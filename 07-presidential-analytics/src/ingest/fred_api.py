@@ -26,7 +26,7 @@ class FREDDataCollector:
         self.config = get_config()
         self.api_key = self.config.fred_api_key
         
-        if not self.api_key or self.api_key == "YOUR_FRED_API_KEY_HERE":
+        if not self.api_key or self.api_key == "0fc3240db258c98d21d6c3efb2c699e7":
             raise ValueError(
                 "FRED API key not configured. "
                 "Get a free key from https://fred.stlouisfed.org/docs/api/api_key.html"
@@ -124,7 +124,8 @@ class FREDDataCollector:
         
         all_data = []
         
-        for series_id in self.metrics:
+        for metric in self.metrics:
+            series_id = metric['series_id'] if isinstance(metric, dict) else metric
             df = self.get_series_data(series_id, start_date, end_date)
             
             if not df.empty:
