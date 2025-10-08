@@ -373,9 +373,9 @@ with tab1:
     st.header("🇸🇳 Senegal Development Overview")
     
     # Key metrics in responsive cards
-col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
 
-with col1:
+    with col1:
         if not pop_df.empty and 'TOTAL_POPULATION' in pop_df.columns:
             latest_pop = pop_df[pop_df['YEAR'] == pop_df['YEAR'].max()]['TOTAL_POPULATION'].iloc[0]
             st.markdown(f'''
