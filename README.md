@@ -304,9 +304,9 @@ I'm actively seeking **Data Engineer** roles where I can contribute to building 
 I'd love to discuss how my skills can contribute to your data team!
 
 **LinkedIn**: [Your LinkedIn URL]  
-**GitHub**: [Your GitHub URL]  
+**GitHub**: https://github.com/Abdoul84/data-engineering-portfolio  
 **Email**: [Your Email]  
-**Portfolio**: [This Repository]
+**Portfolio**: https://github.com/Abdoul84/data-engineering-portfolio
 
 ---
 
