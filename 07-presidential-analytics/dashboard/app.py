@@ -66,19 +66,28 @@ def load_comprehensive_data():
     import snowflake.connector
     import yaml
     
-    # Load config
-    config_path = Path(__file__).parent.parent / "config" / "config.yaml"
-    with open(config_path) as f:
-        config = yaml.safe_load(f)
+    # Try to load from Streamlit secrets first, then config file
+    try:
+        # Streamlit Cloud secrets
+        config = st.secrets["snowflake"]
+    except:
+        try:
+            # Local config file
+            config_path = Path(__file__).parent.parent / "config" / "config.yaml"
+            with open(config_path) as f:
+                config = yaml.safe_load(f)['snowflake']
+        except:
+            st.error("❌ Unable to load Snowflake configuration. Please check your secrets or config file.")
+            return None, None, None, None
     
     # Connect to Snowflake
     conn = snowflake.connector.connect(
-        account=config['snowflake']['account'],
-        user=config['snowflake']['user'],
-        password=config['snowflake']['password'],
-        warehouse=config['snowflake']['warehouse'],
-        database=config['snowflake']['database'],
-        schema=config['snowflake']['schema']
+        account=config['account'],
+        user=config['user'],
+        password=config['password'],
+        warehouse=config['warehouse'],
+        database=config['database'],
+        schema=config['schema']
     )
     
     cursor = conn.cursor()
