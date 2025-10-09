@@ -1,6 +1,6 @@
 # Core Dependencies
 gTTS==2.5.0           # Free Text-to-Speech
-moviepy==1.0.3        # Video editing and composition
+moviepy>=2.1.1        # Video editing and composition (Pillow 11 compatible)
 Pillow>=10.2.0        # Image processing for text overlays (Python 3.13 compatible)
 requests>=2.31.0      # HTTP requests for APIs
 PyYAML>=6.0.1         # Configuration file parsing

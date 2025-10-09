@@ -57,6 +57,27 @@ class PlanetEarthGenerator:
         'paradise here comes with teeth, venom, or crushing force as standard features'
     ]
     
+    SCRIPTURES = [
+        ('Job 12:7-8', 'But ask the animals, and they will teach you, or the birds in the sky, and they will tell you'),
+        ('Psalm 104:21', 'The lions roar for their prey and seek their food from God'),
+        ('Job 38:39-40', 'Do you hunt the prey for the lioness and satisfy the hunger of the lions when they crouch in their dens?'),
+        ('Proverbs 30:30', 'A lion, mighty among beasts, who retreats before nothing'),
+        ('Genesis 1:25', 'God made the wild animals according to their kinds... And God saw that it was good'),
+        ('Psalm 50:10-11', 'For every animal of the forest is mine, and the cattle on a thousand hills. I know every bird in the mountains'),
+        ('Job 39:19-20', 'Do you give the horse its strength or clothe its neck with a flowing mane?'),
+        ('Matthew 6:26', 'Look at the birds of the air; they do not sow or reap... yet your heavenly Father feeds them'),
+        ('Psalm 104:24-25', 'How many are your works, LORD! The earth is full of your creatures, there is the sea, vast and spacious'),
+        ('Job 12:10', 'In his hand is the life of every creature and the breath of all mankind'),
+        ('Psalm 145:15-16', 'The eyes of all look to you, and you give them their food at the proper time'),
+        ('Job 37:14', 'Listen to this, Job; stop and consider God\'s wonders'),
+        ('Romans 1:20', 'For since the creation of the world God\'s invisible qualities are clearly seen in nature'),
+        ('Proverbs 6:6', 'Go to the ant, you sluggard; consider its ways and be wise'),
+        ('Job 40:15', 'Look at Behemoth, which I made along with you'),
+        ('Psalm 148:7,10', 'Praise the LORD from the earth... wild animals and all cattle, small creatures and flying birds'),
+        ('Isaiah 11:6', 'The wolf will live with the lamb, the leopard will lie down with the goat'),
+        ('Genesis 9:2', 'The fear and dread of you will fall on all the beasts of the earth and all the birds in the sky')
+    ]
+    
     def __init__(self):
         """Initialize the generator."""
         random.seed()
@@ -71,21 +92,25 @@ class PlanetEarthGenerator:
         animal = random.choice(self.ANIMALS)
         location = random.choice(self.LOCATIONS)
         reason = random.choice(self.REASONS)
+        scripture_ref, scripture_text = random.choice(self.SCRIPTURES)
         
-        # Generate the dramatic voiceover script
+        # Generate the dramatic voiceover script with scripture
         script = (
             f"In the unforgiving {location}, the majestic {animal} reveals why "
             f"Planet Earth is no vacation spot. Behold as {reason}. "
+            f"As scripture reminds us in {scripture_ref}: '{scripture_text}.' "
             f"I would not recommend this blue marble—unless you fancy a front-row seat "
             f"to nature's unfiltered chaos. Proceed... if you dare."
         )
         
-        # Generate social media caption with hashtags
+        # Generate social media caption with hashtags and scripture
         caption = (
             f"🌍 Why I Wouldn't Recommend Planet Earth: {animal.title()} Edition\n\n"
             f"{reason.split(',')[0]}... 😈\n\n"
+            f"📖 {scripture_ref}: \"{scripture_text}\"\n\n"
             f"#PlanetEarthParody #WhyNotRecommend #NatureHorror #AttenboroughVibes "
             f"#Wildlife #DarkHumor #NatureDocumentary #BBCEarth #TikTokNature "
+            f"#ChristianHumor #BibleVerse #Faith "
             f"#{animal.replace(' ', '')}Facts"
         )
         
@@ -103,6 +128,8 @@ class PlanetEarthGenerator:
             'animal': animal,
             'location': location,
             'reason': reason,
+            'scripture_ref': scripture_ref,
+            'scripture_text': scripture_text,
             'generated_at': datetime.now(timezone.utc).isoformat(),
             'video_duration': 30  # Target duration in seconds
         }

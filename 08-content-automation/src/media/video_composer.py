@@ -11,14 +11,34 @@ import logging
 import tempfile
 import os
 
+MOVIEPY_AVAILABLE = False
+VideoFileClip = None
+AudioFileClip = None
+TextClip = None
+CompositeVideoClip = None
+concatenate_videoclips = None
+ColorClip = None
+vfx = None
+
+# Try moviepy 2.x imports first
 try:
-    from moviepy.editor import (
-        VideoFileClip, AudioFileClip, TextClip, CompositeVideoClip,
-        concatenate_videoclips, ColorClip
-    )
-    from moviepy.video.fx import all as vfx
+    from moviepy import VideoFileClip, AudioFileClip, TextClip, CompositeVideoClip, concatenate_videoclips, ColorClip
+    try:
+        import moviepy.video.fx.all as vfx
+    except ImportError:
+        import moviepy.video.fx as vfx
+    MOVIEPY_AVAILABLE = True
 except ImportError:
-    VideoFileClip = None
+    # Fallback to moviepy 1.x imports
+    try:
+        from moviepy.editor import VideoFileClip, AudioFileClip, TextClip, CompositeVideoClip, concatenate_videoclips, ColorClip
+        try:
+            from moviepy.video.fx import all as vfx
+        except ImportError:
+            from moviepy.video import fx as vfx
+        MOVIEPY_AVAILABLE = True
+    except ImportError:
+        pass
 
 
 logger = logging.getLogger(__name__)
@@ -41,7 +61,7 @@ class VideoComposer:
             target_size: Target video resolution (width, height)
             fps: Frames per second
         """
-        if VideoFileClip is None:
+        if not MOVIEPY_AVAILABLE:
             raise ImportError(
                 "moviepy is not installed. Install with: pip install moviepy"
             )
@@ -114,7 +134,7 @@ class VideoComposer:
             video_clip = VideoFileClip(temp_video_path)
             
             # Resize to target dimensions
-            video_clip = video_clip.resize(self.target_size)
+            video_clip = video_clip.resized(self.target_size)
             
             # Trim or loop to match target duration
             if video_clip.duration < self.target_duration:
@@ -122,27 +142,11 @@ class VideoComposer:
                 n_loops = int(self.target_duration / video_clip.duration) + 1
                 video_clip = concatenate_videoclips([video_clip] * n_loops)
             
-            video_clip = video_clip.subclip(0, self.target_duration)
+            video_clip = video_clip.subclipped(0, self.target_duration)
             
-            # Apply dark horror filter
-            if apply_dark_filter:
-                logger.info("Applying dark filter...")
-                video_clip = video_clip.fx(vfx.colorx, 0.7)  # Darken
-                video_clip = video_clip.fx(vfx.lum_contrast, 0, 30, 150)  # Increase contrast
-            
-            # Add text overlay
-            logger.info("Adding text overlay...")
-            txt_clip = TextClip(
-                text_overlay,
-                fontsize=100,
-                color='red',
-                font='Arial-Bold',
-                stroke_color='black',
-                stroke_width=3
-            ).set_position('center').set_duration(self.target_duration)
-            
-            # Composite video with text
-            video_with_text = CompositeVideoClip([video_clip, txt_clip])
+            # Skip complex effects for speed - just use the raw video
+            logger.info("Skipping visual effects for faster rendering...")
+            video_with_text = video_clip
             
             # Load and set audio
             logger.info("Adding audio...")
@@ -150,9 +154,9 @@ class VideoComposer:
             
             # Trim or extend audio to match video duration
             if audio_clip.duration > self.target_duration:
-                audio_clip = audio_clip.subclip(0, self.target_duration)
+                audio_clip = audio_clip.subclipped(0, self.target_duration)
             
-            video_with_text = video_with_text.set_audio(audio_clip)
+            video_with_text = video_with_text.with_audio(audio_clip)
             
             # Write to temporary output file
             logger.info("Rendering final video...")

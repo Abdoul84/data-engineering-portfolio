@@ -20,11 +20,11 @@ import yaml
 from pathlib import Path
 
 # Import pipeline components
-from generation.planet_earth_generator import PlanetEarthGenerator
-from media.tts_generator import TTSGenerator
-from media.video_fetcher import VideoFetcher
-from media.video_composer import VideoComposer
-from posting.tiktok_uploader import TikTokUploader
+from .generation.planet_earth_generator import PlanetEarthGenerator
+from .media.tts_generator import TTSGenerator
+from .media.video_fetcher import VideoFetcher
+from .media.video_composer import VideoComposer
+from .posting.tiktok_uploader import TikTokUploader
 
 
 # Setup logging
