@@ -20,7 +20,7 @@ import yaml
 from pathlib import Path
 
 # Import pipeline components
-from .generation.planet_earth_generator import PlanetEarthGenerator
+from .generation.earth_review_generator import EarthReviewGenerator
 from .media.tts_generator import TTSGenerator
 from .media.video_fetcher import VideoFetcher
 from .media.video_composer import VideoComposer
@@ -55,7 +55,7 @@ class PlanetEarthPipeline:
         self.config = self._load_config(config_path)
         
         # Initialize components
-        self.generator = PlanetEarthGenerator()
+        self.generator = EarthReviewGenerator()
         self.tts = TTSGenerator(lang='en', tld='co.uk')  # British accent
         
         # Initialize video fetcher (requires API key)
@@ -117,10 +117,10 @@ class PlanetEarthPipeline:
             content = self.generator.generate_content()
             result['stages']['generation'] = {
                 'success': True,
-                'animal': content['animal'],
+                'topic': content['topic'],
                 'location': content['location']
             }
-            logger.info(f"✅ Generated: {content['animal']} in {content['location']}")
+            logger.info(f"✅ Generated: {content['topic']} in {content['location']}")
             
             # Stage 2: Generate TTS audio
             logger.info("\n[2/5] 🎙️  Generating voiceover...")
@@ -135,8 +135,10 @@ class PlanetEarthPipeline:
             # Stage 3: Fetch video footage
             if self.video_fetcher:
                 logger.info("\n[3/5] 🎬 Fetching stock footage...")
+                # Search for human/social content instead of animals
+                search_query = f"{content['topic']} {content['location']}"
                 video_stream = self.video_fetcher.fetch_video(
-                    content['animal'],
+                    content['topic'],
                     content['location']
                 )
                 
