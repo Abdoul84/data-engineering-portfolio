@@ -169,3 +169,4 @@ COMMENT ON COLUMN education_indicators.literacy_rate_adult IS 'Adult literacy ra
 COMMENT ON COLUMN health_indicators.infant_mortality_rate IS 'Infant mortality rate per 1000 live births';
 COMMENT ON COLUMN infrastructure_indicators.electricity_access_percent IS 'Percentage of population with electricity access';
 COMMENT ON COLUMN social_indicators.gini_coefficient IS 'Gini coefficient measuring income inequality (0-1 scale)';
+

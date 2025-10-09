@@ -485,3 +485,4 @@ st.markdown("""
     Last Updated: """ + datetime.now().strftime('%B %d, %Y') + """</small>
 </div>
 """, unsafe_allow_html=True)
+

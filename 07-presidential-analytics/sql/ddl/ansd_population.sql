@@ -70,3 +70,4 @@ COMMENT ON COLUMN ansd_population.urban_percentage IS 'Percentage of population 
 COMMENT ON COLUMN ansd_population.population_growth_rate IS 'Annual population growth rate (%)';
 COMMENT ON COLUMN ansd_demographics.youth_dependency_ratio IS 'Ratio of population under 15 to working age population';
 COMMENT ON COLUMN ansd_demographics.total_fertility_rate IS 'Average number of children per woman';
+

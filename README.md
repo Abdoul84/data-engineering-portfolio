@@ -141,6 +141,25 @@ Built a comprehensive development analytics platform analyzing Senegal's progres
 
 ---
 
+### 6. 🌍 [Planet Earth Parody - Automated Content Pipeline](08-content-automation/)
+**Zero-Storage Media Pipeline with API Integration**
+
+Built a fully automated content generation pipeline that creates nature documentary parodies with AI voiceover, stock footage, and social media posting - all without local file storage.
+
+**Key Achievements**:
+- **In-Memory Processing**: All video/audio streams through RAM (zero storage footprint)
+- **Multi-API Integration**: Pexels (video), gTTS (audio), TikTok (posting)
+- **Automated Scheduling**: GitHub Actions runs daily at 10 AM UTC
+- **Video Composition**: MoviePy assembles 30-second videos with text overlays
+- **100% Free**: Entirely built on free tier APIs and services
+
+**Technologies**: Python, gTTS, MoviePy, Pexels API, TikTok API, GitHub Actions  
+**Skills**: API Integration, Media Processing, Automation, In-Memory Computing
+
+[View Project →](08-content-automation/)
+
+---
+
 ## 🏆 Project Highlights
 
 ### **Most Complex Implementations**
@@ -160,13 +179,13 @@ Built a comprehensive development analytics platform analyzing Senegal's progres
 
 ## 📊 Portfolio Metrics
 
-- **7 Major Projects** across analytics and infrastructure
+- **8 Major Projects** across analytics, infrastructure, and automation
 - **50+ SQL Queries** demonstrating advanced analytical techniques
-- **15+ Python Scripts** for data pipelines and distributed processing
-- **Interactive Dashboard** with real-time filtering and visualization
-- **150+ Hours** of hands-on development
+- **20+ Python Scripts** for data pipelines, distributed processing, and media automation
+- **Interactive Dashboards** with real-time filtering and visualization
+- **200+ Hours** of hands-on development
 - **Full Test Coverage** with unit and integration tests
-- **Cloud Integration** with AWS S3 and Snowflake
+- **Cloud Integration** with AWS S3, Snowflake, and multi-API orchestration
 
 ---
 
@@ -216,6 +235,7 @@ data-engineering-portfolio/
 ├── 05-analytical-patterns/      # Growth, Retention, Funnels
 ├── 06-experimentation/          # A/B Testing, KPIs
 ├── 07-presidential-analytics/   # API → S3 → Snowflake → Dashboard
+├── 08-content-automation/       # Automated Media Pipeline (Zero Storage)
 ├── docs/                        # Additional documentation
 ├── assets/                      # Diagrams, screenshots
 └── README.md                    # This file

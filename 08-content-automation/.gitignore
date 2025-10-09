@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Configuration (contains API keys)
+config/config.yaml
+
+# Logs
+logs/*.json
+logs/*.jsonl
+*.log
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Video/Audio files (if accidentally saved)
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+
+# Keep example config
+!config/config.yaml.example
+

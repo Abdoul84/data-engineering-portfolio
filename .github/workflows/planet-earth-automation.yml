@@ -1,0 +1,140 @@
+name: Planet Earth Parody - Automated Content Generation
+
+# Schedule: Run daily at 10 AM UTC
+on:
+  schedule:
+    - cron: '0 10 * * *'  # Daily at 10 AM UTC
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      save_output:
+        description: 'Save video to artifacts for testing'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    
+    env:
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: ✅ Verify API credentials
+      run: |
+        if [ -z "$PEXELS_API_KEY" ]; then
+          echo "⚠️  WARNING: PEXELS_API_KEY not configured"
+          echo "Video fetching will be skipped"
+        else
+          echo "✅ Pexels API key found"
+        fi
+        
+        if [ -z "$TIKTOK_ACCESS_TOKEN" ]; then
+          echo "⚠️  WARNING: TIKTOK_ACCESS_TOKEN not configured"
+          echo "Running in DRY RUN mode (no actual posting)"
+        else
+          echo "✅ TikTok access token found"
+        fi
+    
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    
+    - name: 📦 Install dependencies
+      run: |
+        cd 08-content-automation
+        pip install -r requirements.txt
+    
+    - name: 📦 Install system dependencies (FFmpeg)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+    
+    - name: 🔧 Configure pipeline
+      run: |
+        cd 08-content-automation
+        
+        # Create config from environment variables
+        cat > config/config.yaml << EOF
+        pexels:
+          api_key: "${PEXELS_API_KEY:-YOUR_PEXELS_API_KEY}"
+        
+        tiktok:
+          access_token: "${TIKTOK_ACCESS_TOKEN:-YOUR_TIKTOK_ACCESS_TOKEN}"
+        
+        content:
+          video_duration: 30
+          posting_frequency: "daily"
+        
+        processing:
+          in_memory_only: true
+          cleanup_streams: true
+          dry_run: ${{ secrets.TIKTOK_ACCESS_TOKEN == '' && 'true' || 'false' }}
+        
+        logging:
+          level: "INFO"
+          save_logs: true
+          log_file: "logs/pipeline.json"
+        EOF
+        
+        echo "✅ Configuration created"
+    
+    - name: 🌍 Generate Planet Earth Parody
+      id: generate
+      run: |
+        cd 08-content-automation
+        
+        # Run pipeline
+        if [ "${{ github.event.inputs.save_output }}" = "true" ]; then
+          python -m src.main --save
+        else
+          python -m src.main
+        fi
+        
+        echo "✅ Pipeline completed"
+      env:
+        PYTHONUNBUFFERED: 1
+    
+    - name: 📊 Upload artifacts (if requested)
+      if: github.event.inputs.save_output == 'true'
+      uses: actions/upload-artifact@v3
+      with:
+        name: planet-earth-video-${{ github.run_number }}
+        path: /tmp/planet_earth_*.mp4
+        retention-days: 7
+    
+    - name: 📝 Save execution log
+      if: always()
+      run: |
+        cd 08-content-automation
+        
+        # Create lightweight log entry
+        mkdir -p logs
+        echo "{\"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\", \"status\": \"${{ job.status }}\", \"run_id\": \"${{ github.run_id }}\"}" >> logs/executions.jsonl
+        
+        echo "✅ Log saved"
+    
+    - name: 🎉 Success notification
+      if: success()
+      run: |
+        echo "✅ Planet Earth Parody video generated and posted successfully!"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Timestamp: $(date -u)"
+    
+    - name: ❌ Failure notification
+      if: failure()
+      run: |
+        echo "❌ Pipeline failed"
+        echo "Check logs for details: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+

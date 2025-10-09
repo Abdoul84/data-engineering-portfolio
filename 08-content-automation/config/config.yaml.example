@@ -1,0 +1,31 @@
+# Planet Earth Parody Pipeline Configuration (Example)
+
+# Pexels API (Free tier: 200 requests/hour)
+# Register at: https://www.pexels.com/api/
+pexels:
+  api_key: "YOUR_PEXELS_API_KEY"
+
+# TikTok API (Requires TikTok Developer account)
+# Register at: https://developers.tiktok.com/
+tiktok:
+  access_token: "YOUR_TIKTOK_ACCESS_TOKEN"
+  # Note: TikTok API requires OAuth 2.0 flow
+  # For now, use dry_run mode for testing
+
+# Content settings
+content:
+  video_duration: 30  # Target duration in seconds
+  posting_frequency: "daily"  # How often to post (daily, twice_daily)
+
+# Processing options
+processing:
+  in_memory_only: true  # Never save files to disk (except /tmp for testing)
+  cleanup_streams: true  # Free memory after each step
+  dry_run: true  # Set to false to enable real TikTok posting
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  save_logs: true  # Save lightweight JSON logs
+  log_file: "logs/pipeline.json"
+
