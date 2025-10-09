@@ -51,8 +51,8 @@ TikTok API (direct upload)
 
 - Python 3.10+
 - FFmpeg (for video processing)
-- Pexels API key (free)
-- TikTok Developer account (optional, for real posting)
+- Pexels API key (free, required)
+- **Note**: TikTok API requires business verification. We recommend **manual posting** (see [POSTING_GUIDE.md](POSTING_GUIDE.md))
 
 ### Installation
 
@@ -84,10 +84,10 @@ sudo apt-get install ffmpeg
        api_key: "YOUR_KEY_HERE"
      ```
 
-3. **Optional - TikTok Setup:**
-   - Register app at: https://developers.tiktok.com/
-   - Complete OAuth 2.0 flow
-   - Add access token to config
+3. **Posting Setup (Choose one):**
+   - **Recommended**: Manual posting (1 minute) - See [POSTING_GUIDE.md](POSTING_GUIDE.md)
+   - **Advanced**: YouTube/Twitter APIs (easy setup) - See [API_SETUP.md](API_SETUP.md)
+   - **Hard Mode**: TikTok API (requires business verification) - See [API_SETUP.md](API_SETUP.md)
 
 ### Usage
 
@@ -143,6 +143,10 @@ Starting Planet Earth Parody Pipeline
 
 [5/5] 📤 Uploading to TikTok...
 ✅ Upload successful (DRY RUN MODE - no actual post)
+💾 Saved to /tmp/planet_earth_20251009_173045.mp4
+
+📝 Caption ready to paste:
+🌍 Why I Wouldn't Recommend Planet Earth: Lion Edition...
 
 🧹 Cleaning up memory...
 ✅ Memory cleaned
